@@ -1,6 +1,7 @@
 #Libraries
 import os
 
+global tablero
 #Constants
 equals = ("==================================")
 tittle = ('|------------CONNECT 4-----------|')
@@ -11,7 +12,21 @@ def chooseColor(op):
     return
 
 def buildBoard(r, c):
-    return
+    tablero = [[' ' for _ in range(c)] for _ in range(r)]
+
+def printBoard():
+
+    for c in range(columns):
+        print(f" ({c + 1})", end='')
+    print("\n")
+
+    for r in range(rows):
+        print("|", end='')
+        for c in range(columns):
+            print(f" {tablero[r][c]} |", end='')
+        print()
+    
+    print(f"{'-' * ((5 * columnas) - 6)}\n")
 
 def whoWins(op):
     return
@@ -24,7 +39,7 @@ def menuGame(op):
     clear()
 
     #Global Constants
-    global player1, player2
+    global player1, player2, rows, columns
     #Constant
     boolean = True
 
