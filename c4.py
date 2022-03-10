@@ -1,7 +1,6 @@
 #Libraries
 import os
 
-global tablero
 #Constants
 equals = ("==================================")
 tittle = ('|------------CONNECT 4-----------|')
@@ -9,9 +8,47 @@ tittle = ('|------------CONNECT 4-----------|')
 clear = lambda: os.system('cls')
 
 def chooseColor(op):
-    return
+
+    clear()
+
+    print(equals)
+    print('|--------------COLORS------------|')
+    print(f"{equals}\n")
+    
+    colors = {
+        'red' : '\033[0;31m',
+        'green' : '\033[0;32m',
+        'yellow': '\033[0;33m',
+        'blue' : '\033[0;34m',
+        'purple': '\033[0;35m',
+        "cyan": '\033[0;36m',
+        'grey': '\033[0;37m'
+    }
+
+    colors_bg = {
+        'red' : '\033[0;37;41m',
+        'green' : '\033[0;30;42m',
+        'yellow': '\033[0;30;43m',
+        'blue' : '\033[0;37;44m',
+        'purple': '\033[0;37;45m',
+        "cyan": '\033[0;30;46m',
+        'grey': '\033[0;30;47m'
+
+    }
+
+    reset = '\033[0;39m'
+
+    for x in colors_bg:
+        print(f"{colors_bg[x] + x.upper() + reset}", end=' ')
+    print('\n')
+
+    piece_p1 = input(f"{player1}, choose a color for your piece: ")
+
+    connectFour(1)
 
 def buildBoard(r, c):
+    global tablero
+
     tablero = [[' ' for _ in range(c)] for _ in range(r)]
 
 def printBoard():
@@ -26,17 +63,32 @@ def printBoard():
             print(f" {tablero[r][c]} |", end='')
         print()
     
-    print(f"{'-' * ((5 * columnas) - 6)}\n")
+    print(f"{'-' * ((5 * columns) - 6)}\n")
 
 def whoWins(op):
     return
 
 def connectFour(op):
-    return
+    
+    clear()
+
+    print(equals)
+    print(tittle)
+    print(f"{equals}\n")
+
+    #Player vs Player
+    if op == 1:
+        print(f"|{'-' * (rows + columns)} {player1} | {player2} {'-' * (rows + columns)}|\n")
+
+        printBoard()
 
 def menuGame(op):
 
     clear()
+
+    print(equals)
+    print(tittle)
+    print(f"{equals}\n")
 
     #Global Constants
     global player1, player2, rows, columns
@@ -56,7 +108,7 @@ def menuGame(op):
                 print("\n|--- ERROR: The number of rows and columns cannot be equal ---|\n")
 
             elif (rows < columns) and ((columns - rows) == 1):
-                buildBoard(row, columns)
+                buildBoard(rows, columns)
                 boolean = False
                 print()
 
