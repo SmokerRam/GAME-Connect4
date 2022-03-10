@@ -1,20 +1,66 @@
 #Libraries
 import os
+import random
 
 #Constants
 equals = ("==================================")
 tittle = ('|------------CONNECT 4-----------|')
+data_invalid = ("\n|--- ERROR: The data entered is invalid ---|\n")
 #To clear the terminal
 clear = lambda: os.system('cls')
+
+def whoWins(op):
+    return
+
+def whoStart():
+
+    global turn
+    who_start = random.randint(0, 3)
+
+    if who_start == 1:
+        turn = piece_p1
+
+        return 0
+
+    else:
+        turn = piece_p2
+        return 1
+
+def writeBoard(p1, p2):
+    return
+
+def printBoard():
+
+    for c in range(columns):
+        print(f" ({c + 1})", end='')
+    print("\n")
+
+    for r in range(rows):
+        print("|", end='')
+        for c in range(columns):
+            print(f" {tablero[r][c]} |", end='')
+        print()
+    
+    print(f"{'-' * ((5 * columns) - 6)}\n")
+
+def buildBoard(r, c):
+    global tablero
+
+    tablero = [[' ' for _ in range(c)] for _ in range(r)]
 
 def chooseColor(op):
 
     clear()
 
+    global piece_p1, piece_p2
+    boolean = True
+
     print(equals)
     print('|--------------COLORS------------|')
     print(f"{equals}\n")
     
+    color = ['red', 'green', 'yellow', 'blue', 'purple', 'cyan', 'grey']
+
     colors = {
         'red' : '\033[0;31m',
         'green' : '\033[0;32m',
@@ -33,40 +79,88 @@ def chooseColor(op):
         'purple': '\033[0;37;45m',
         "cyan": '\033[0;30;46m',
         'grey': '\033[0;30;47m'
-
     }
 
     reset = '\033[0;39m'
 
     for x in colors_bg:
         print(f"{colors_bg[x] + x.upper() + reset}", end=' ')
+    
     print('\n')
 
-    piece_p1 = input(f"{player1}, choose a color for your piece: ")
+    if op == 1:
+        while boolean:
 
+            try:
+                color_p1 = input(f"{player1}, choose a color for your piece: ").lower()
+
+                if color_p1 in colors:
+
+                    piece_p1 = colors[color_p1] + 'O' + reset
+                    boolean = False
+
+                else:
+                    print("\n|--- ERROR: the entered color is not available ---|\n")
+
+            except (ValueError, TypeError, IndexError):
+                print(data_invalid)
+
+        boolean = True
+
+        while boolean:
+
+            try:
+                color_p2 = input(f"{player2}, choose a color for your piece: ").lower()
+
+                if color_p2 == color_p1:
+                    print("\n|--- ERROR: the chosen color is already taken, choose another ---|\n")
+                
+                else:
+                    if color_p2 in colors:
+
+                        piece_p2 = colors[color_p2] + 'O' + reset
+                        boolean = False
+
+                    else:
+                        print("\n|--- ERROR: the entered color is not available ---|\n")
+
+            except (ValueError, TypeError, IndexError):
+                print(data_invalid)
+
+    elif op == 2:
+
+        while boolean:
+
+            try:
+                color_p1 = input(f"{player1}, choose a color for your piece: ").lower()
+
+                if color_p1 in colors:
+
+                    piece_p1 = colors[color_p1] + 'O' + reset
+                    boolean = False
+
+                else:
+                    print("\n|--- ERROR: the entered color is not available ---|\n")
+
+            except (ValueError, TypeError, IndexError):
+                print(data_invalid)
+
+        color_p2 = color_p1
+
+        while color_p2 == color_p1:
+            color_p2 = random.choice(color)
+            piece_p2 = colors[color_p2] + 'O' + reset
+
+    clear()
+    print(equals)
+    print('|--------------COLORS------------|')
+    print(f"{equals}\n")
+
+    print(f"\n{player1}, you chose the color: {colors_bg[color_p1] + color_p1.upper() + reset}\n")
+    print(f"{player2}, you chose the color: {colors_bg[color_p2] + color_p2.upper() + reset}\n")    
+
+    input('\nPress any key for continue...')
     connectFour(1)
-
-def buildBoard(r, c):
-    global tablero
-
-    tablero = [[' ' for _ in range(c)] for _ in range(r)]
-
-def printBoard():
-
-    for c in range(columns):
-        print(f" ({c + 1})", end='')
-    print("\n")
-
-    for r in range(rows):
-        print("|", end='')
-        for c in range(columns):
-            print(f" {tablero[r][c]} |", end='')
-        print()
-    
-    print(f"{'-' * ((5 * columns) - 6)}\n")
-
-def whoWins(op):
-    return
 
 def connectFour(op):
     
@@ -76,11 +170,37 @@ def connectFour(op):
     print(tittle)
     print(f"{equals}\n")
 
-    #Player vs Player
-    if op == 1:
-        print(f"|{'-' * (rows + columns)} {player1} | {player2} {'-' * (rows + columns)}|\n")
+    if whoStart() == 1:
+
+        print(f"|{'-' * columns} {player1}: {piece_p1} | {player2}: {piece_p2} {'-' * columns}|\n")
 
         printBoard()
+
+        column = int(input(f'Please {player1}, select a column: '))
+        turn = piece_p2
+
+    else:
+
+        print(f"|{'-' * columns} {player1}: {piece_p1} | {player2}: {piece_p2} {'-' * columns}|\n")
+
+        printBoard()
+
+        column = int(input(f'Please {player2}, select a column: '))
+        turn = piece_p1
+
+    while whoWins(op) != False:
+
+        print("\n")
+
+        printBoard()
+
+        if turn == piece_p2:
+            column = int(input(f'Please {player2}, select a column: '))
+            turn = piece_p1
+
+        else:
+            column = int(input(f'Please {player1}, select a column: '))
+            turn = piece_p2
 
 def menuGame(op):
 
@@ -93,33 +213,34 @@ def menuGame(op):
     #Global Constants
     global player1, player2, rows, columns
     #Constant
+
     boolean = True
-
-    while boolean:
-        try:
-            rows = int(input('Please, enter the number of rows for the board: '))
-            columns = int(input('Please, enter the number of rows for the board: ')) 
-
-            if (rows < 6) or (columns < 7):
-                boolean
-                print("\n|--- ERROR: The minimum number of rows and columns is 6x7 ---|\n")
-
-            elif rows == columns:
-                print("\n|--- ERROR: The number of rows and columns cannot be equal ---|\n")
-
-            elif (rows < columns) and ((columns - rows) == 1):
-                buildBoard(rows, columns)
-                boolean = False
-                print()
-
-            else:
-                print('\n|--- ERROR: the number of rows must be one less than the number of columns ---|\n')
-
-        except (ValueError, TypeError, IndexError):
-            print("\n|--- ERROR: The data entered is invalid ---|\n")
 
     #Player vs Player
     if op == 1:
+
+        while boolean:
+            try:
+                rows = int(input('Please, enter the number of rows for the board: '))
+                columns = int(input('Please, enter the number of columns for the board: ')) 
+
+                if (rows < 6) or (columns < 7):
+                    boolean
+                    print("\n|--- ERROR: The minimum number of rows and columns is 6x7 ---|\n")
+
+                elif rows == columns:
+                    print("\n|--- ERROR: The number of rows and columns cannot be equal ---|\n")
+
+                elif (rows < columns) and ((columns - rows) == 1):
+                    buildBoard(rows, columns)
+                    boolean = False
+                    print()
+
+                else:
+                    print('\n|--- ERROR: the number of rows must be one less than the number of columns ---|\n')
+
+            except (ValueError, TypeError, IndexError):
+                print(data_invalid)
 
         #Names of players
         player1 = input("Please, enter player 1 name: ")
@@ -130,6 +251,29 @@ def menuGame(op):
 
     #Player vs IA
     elif op == 2:
+
+        while boolean:
+            try:
+                rows = int(input('Please, enter the number of rows for the board: '))
+                columns = int(input('Please, enter the number of columns for the board: ')) 
+
+                if (rows < 6) or (columns < 7):
+                    boolean
+                    print("\n|--- ERROR: The minimum number of rows and columns is 6x7 ---|\n")
+
+                elif rows == columns:
+                    print("\n|--- ERROR: The number of rows and columns cannot be equal ---|\n")
+
+                elif (rows < columns) and ((columns - rows) == 1):
+                    buildBoard(rows, columns)
+                    boolean = False
+                    print()
+
+                else:
+                    print('\n|--- ERROR: the number of rows must be one less than the number of columns ---|\n')
+
+            except (ValueError, TypeError, IndexError):
+                print(data_invalid)
 
         #Names of players
         player1 = input("Please, enter player 1 name: ")
@@ -188,7 +332,7 @@ def menu(op):
                     menuGame(mode)
 
             except (ValueError, TypeError, IndexError):
-                print("\n|--- ERROR: The data entered is invalid ---|\n")
+                print(data_invalid)
     
     #Instruccions
     elif op == 2:
@@ -245,6 +389,6 @@ def main():
                 menu(option)
 
         except (ValueError, TypeError, IndexError):
-            print("\n|--- ERROR: The data entered is invalid ---|\n")
+            print(data_invalid)
 
 main()
