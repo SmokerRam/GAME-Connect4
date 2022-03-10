@@ -9,8 +9,8 @@ data_invalid = ("\n|--- ERROR: The data entered is invalid ---|\n")
 #To clear the terminal
 clear = lambda: os.system('cls')
 
-def whoWins(op):
-    return
+def whoWins():
+    return False
 
 def whoStart():
 
@@ -18,35 +18,47 @@ def whoStart():
     who_start = random.randint(0, 3)
 
     if who_start == 1:
-        turn = piece_p1
-
         return 0
 
     else:
-        turn = piece_p2
         return 1
 
-def writeBoard(p1, p2):
-    return
+def writeBoard(col):
+    
+    for r in range(rows):
+        if board[r][col - 1] == ' ':
+            board[r][col - 1] = turn
+            break
+        else:
+            continue
+
+def validColumn(col):
+
+    if col > 0 and col < columns + 1:
+        return True
+
+    else:
+        return False
 
 def printBoard():
 
     for c in range(columns):
         print(f" ({c + 1})", end='')
+
     print("\n")
 
-    for r in range(rows):
+    for r in range(rows-1, -1, -1):
         print("|", end='')
         for c in range(columns):
-            print(f" {tablero[r][c]} |", end='')
+            print(f" {board[r][c]} |", end='')
         print()
-    
+
     print(f"{'-' * ((5 * columns) - 6)}\n")
 
 def buildBoard(r, c):
-    global tablero
+    global board
 
-    tablero = [[' ' for _ in range(c)] for _ in range(r)]
+    board = [[' ' for _ in range(c)] for _ in range(r)]
 
 def chooseColor(op):
 
@@ -164,43 +176,70 @@ def chooseColor(op):
 
 def connectFour(op):
     
+    global turn
+
     clear()
 
     print(equals)
     print(tittle)
     print(f"{equals}\n")
 
-    if whoStart() == 1:
+    if whoStart() == 0:
+
+        turn = piece_p1
 
         print(f"|{'-' * columns} {player1}: {piece_p1} | {player2}: {piece_p2} {'-' * columns}|\n")
 
         printBoard()
 
         column = int(input(f'Please {player1}, select a column: '))
+
+        while validColumn(column) is False:
+            column = int(input(f'Please {player1}, select a column: '))
+
+        writeBoard(column)
         turn = piece_p2
 
     else:
+
+        turn = piece_p2
 
         print(f"|{'-' * columns} {player1}: {piece_p1} | {player2}: {piece_p2} {'-' * columns}|\n")
 
         printBoard()
 
         column = int(input(f'Please {player2}, select a column: '))
+
+        while validColumn(column) is False:
+            column = int(input(f'Please {player2}, select a column: '))
+
+        writeBoard(column)
         turn = piece_p1
 
-    while whoWins(op) != False:
+    while whoWins() is False:
 
-        print("\n")
-
+        clear()
         printBoard()
 
-        if turn == piece_p2:
-            column = int(input(f'Please {player2}, select a column: '))
-            turn = piece_p1
+        if turn == piece_p1:
+
+            column = int(input(f'Please {player1}, select a column: '))
+
+            while validColumn(column) is False:
+                column = int(input(f'Please {player1}, select a column: '))
+
+            writeBoard(column)
+            turn = piece_p2
 
         else:
-            column = int(input(f'Please {player1}, select a column: '))
-            turn = piece_p2
+
+            column = int(input(f'Please {player2}, select a column: '))
+
+            while validColumn(column) is False:
+                column = int(input(f'Please {player2}, select a column: '))
+
+            writeBoard(column)
+            turn = piece_p1
 
 def menuGame(op):
 
